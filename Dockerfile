@@ -76,17 +76,26 @@ FROM src AS src-mmdb
 RUN curl -SsOL "https://github.com/crazy-max/geoip-updater/raw/mmdb/GeoLite2-City.mmdb" \
   && curl -SsOL "https://github.com/crazy-max/geoip-updater/raw/mmdb/GeoLite2-Country.mmdb"
 
-# geoip2-rutorrent isn't independently versioned upstream — it's vendored
-# source from within crazymax's own repo. composer:2 resolves its PHP
-# dependency (the official MaxMind geoip2/geoip2 package) the same way his
-# own build does.
+# geoip2-rutorrent isn't independently versioned upstream — it's a subfolder
+# of crazymax's own repo, not a separately-tagged project, so there's no
+# release for Renovate to track. Deliberately unpinned instead, same
+# philosophy as hotio/base and the mmdb data above: always fetch current,
+# let the weekly scheduled rebuild be what actually catches upstream
+# changes, rather than force this into the Renovate-PR pattern it doesn't
+# cleanly fit.
+FROM src AS src-geoip2-crazymax
+RUN git init . && git remote add origin "https://github.com/crazy-max/docker-rtorrent-rutorrent.git"
+RUN git fetch origin master && git checkout -q FETCH_HEAD
+
+# composer:2 resolves geoip2-rutorrent's PHP dependency (the official
+# MaxMind geoip2/geoip2 package) the same way crazymax's own build does.
 FROM composer:2 AS vendor-geoip2-rutorrent
 WORKDIR /app
-COPY geoip2-rutorrent/composer.json geoip2-rutorrent/composer.lock ./
+COPY --from=src-geoip2-crazymax /src/geoip2-rutorrent/composer.json /src/geoip2-rutorrent/composer.lock ./
 RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader
 
 FROM src AS src-geoip2-rutorrent
-COPY geoip2-rutorrent /src
+COPY --from=src-geoip2-crazymax /src/geoip2-rutorrent /src
 COPY --from=vendor-geoip2-rutorrent /app/vendor /src/vendor
 
 # ---------------------------------------------------------------------------
