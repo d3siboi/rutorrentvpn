@@ -1,4 +1,4 @@
-# hotio-rtorrent
+#rutorrentvpn
 
 rtorrent + ruTorrent, running on [hotio](https://github.com/hotio)'s `alpinevpn` base image (WireGuard, Proton/PIA NAT-PMP port forwarding), with rtorrent and libtorrent compiled from source rather than pulled from a package repo, plus nginx, PHP-FPM, and the ruTorrent web UI with the filemanager and geoip2 plugins built in.
 
