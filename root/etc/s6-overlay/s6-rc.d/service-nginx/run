@@ -10,8 +10,9 @@ mkdir -p /var/run/nginx /var/lib/nginx/logs /tmp/nginx /tmp/nginx-proxy /tmp/ngi
 find /var/run/nginx /var/lib/nginx/logs /tmp/nginx /tmp/nginx-proxy /tmp/nginx-fastcgi /tmp/nginx-uwsgi /tmp/nginx-scgi \
     -maxdepth 0 \( ! -user hotio -or ! -group hotio \) -exec chown hotio:hotio {} +
 
-mkdir -p "${CONFIG_DIR}/rutorrent/share/users" "${CONFIG_DIR}/rutorrent/share/torrents" "${CONFIG_DIR}/rutorrent/auth"
+mkdir -p "${CONFIG_DIR}/rutorrent/share/users" "${CONFIG_DIR}/rutorrent/share/torrents" "${CONFIG_DIR}/rutorrent/auth" "${CONFIG_DIR}/log"
 find "${CONFIG_DIR}/rutorrent" -maxdepth 0 \( ! -user hotio -or ! -group hotio \) -exec chown -R hotio:hotio {} +
+find "${CONFIG_DIR}/log" -maxdepth 0 \( ! -user hotio -or ! -group hotio \) -exec chown hotio:hotio {} +
 
 if [[ ! -f "${CONFIG_DIR}/rutorrent/auth/rutorrent.htpasswd" ]]; then
     log_wrn "[NGINX] No htpasswd file found — creating an empty one. The UI will reject ALL logins until you add a user with: docker exec -it <container> htpasswd -B ${CONFIG_DIR}/rutorrent/auth/rutorrent.htpasswd <username>"
