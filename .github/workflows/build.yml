@@ -6,6 +6,7 @@ on:
     paths:
       - 'Dockerfile'
       - 'root/**'
+      - '.github/workflows/build.yml'
   schedule:
     # Weekly, independent of any ARG change — this is what catches
     # hotio/base:alpinevpn updates and Alpine package patches, since
