@@ -1,0 +1,28 @@
+#!/command/with-contenv bash
+# shellcheck shell=bash
+
+# shellcheck source=/dev/null
+source /etc/s6-overlay/scripts/bash-functions
+
+umask "${UMASK}"
+
+if [[ ! -f "${CONFIG_DIR}/rtorrent.rc" ]]; then
+    log_inf "[RTORRENT] Installing default configuration file..."
+    cp "${APP_DIR}/rtorrent.rc" "${CONFIG_DIR}/rtorrent.rc"
+    find "${CONFIG_DIR}/rtorrent.rc" -maxdepth 0 \( ! -user hotio -or ! -group hotio \) -exec chown hotio:hotio {} +
+fi
+
+if [[ "${VPN_ENABLED}" == "true" ]] && [[ "${VPN_AUTO_PORT_FORWARD}" != "false" ]]; then
+    log_inf "[RTORRENT] Delaying start until forwarded port is available."
+    until [[ -f "${CONFIG_DIR}/wireguard/forwarded_port_validated" ]]; do
+        sleep 1
+    done
+    forwarded_port=$(sed -n '1p' "${CONFIG_DIR}/wireguard/forwarded_port_validated")
+    OPTIONS="try_import=${CONFIG_DIR}/rtorrent.rc,try_import=${APP_DIR}/rtorrent-fix.rc,network.scgi.open_local=/dev/shm/rtorrent.sock,system.daemon.set=true,network.listen.port.set=${forwarded_port},network.listen.port.random=no"
+    log_inf "[RTORRENT] Starting with forwarded port [${forwarded_port}]."
+else
+    OPTIONS="try_import=${CONFIG_DIR}/rtorrent.rc,try_import=${APP_DIR}/rtorrent-fix.rc,network.scgi.open_local=/dev/shm/rtorrent.sock,system.daemon.set=true"
+fi
+
+# shellcheck disable=SC2086
+exec s6-setuidgid hotio /usr/local/bin/rtorrent -n -o "${OPTIONS}"

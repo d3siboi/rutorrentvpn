@@ -1,0 +1,92 @@
+#############################################################################
+# Default rTorrent configuration, seeded into ${CONFIG_DIR}/rtorrent.rc on
+# first start if that file doesn't already exist. Edit the copy in /config,
+# not this one — this one only matters before first boot.
+#############################################################################
+
+## Instance layout (base paths)
+## Download content is deliberately its OWN top-level mount, separate from
+## /config — it needs to share a filesystem/volume mount with Radarr/Sonarr
+## for hardlinks to actually hardlink instead of silently falling back to
+## copies. Everything else (session state, logs, watch folders) stays under
+## /config since none of that needs to be visible to other containers.
+method.insert = cfg.basedir,  private|const|string, (cat,"/config/")
+method.insert = cfg.download, private|const|string, (cat,"/downloads/")
+method.insert = cfg.logs,     private|const|string, (cat,(cfg.basedir),"log/")
+method.insert = cfg.logfile,  private|const|string, (cat,(cfg.logs),"rtorrent-",(system.time),".log")
+method.insert = cfg.session,  private|const|string, (cat,(cfg.basedir),"session/")
+method.insert = cfg.watch,    private|const|string, (cat,(cfg.basedir),"watch/")
+
+## Create instance directories
+execute.throw = sh, -c, (cat,\
+    "mkdir -p \"",(cfg.download),"\" ",\
+    "\"",(cfg.logs),"\" ",\
+    "\"",(cfg.session),"\" ",\
+    "\"",(cfg.watch),"/load\" ",\
+    "\"",(cfg.watch),"/start\" ")
+
+## Tracker-less torrent and UDP tracker support
+dht.mode.set = auto
+protocol.pex.set = yes
+trackers.use_udp.set = yes
+
+## DHT deliberately has no override_port set here. Checked the actual
+## libtorrent source: with no override, DHT automatically uses the same
+## port as the main (Proton-forwarded) listen port, AND libtorrent
+## auto-restarts DHT on that port whenever the listen port changes. Proton's
+## NAT-PMP negotiation already forwards that same port number for both TCP
+## and UDP together, so this rides on firewall coverage that already
+## exists — no separate static port or VPN_PORT_REDIRECTS entry needed.
+
+## Peer settings
+throttle.max_uploads.set = 100
+throttle.max_uploads.global.set = 250
+
+throttle.min_peers.normal.set = 20
+throttle.max_peers.normal.set = 60
+throttle.min_peers.seed.set = 30
+throttle.max_peers.seed.set = 80
+trackers.numwant.set = 80
+
+protocol.encryption.set = prefer
+
+## Limits for file handle resources — leave a ceiling for rTorrent's own needs
+network.max_open_files.set = 600
+network.max_open_sockets.set = 512
+
+## Memory resource usage
+pieces.memory.max.set = 1800M
+network.xmlrpc.size_limit.set = 4M
+
+## Basic operational settings
+session.path.set = (cat, (cfg.session))
+directory.default.set = (cat, (cfg.download))
+log.execute = (cat, (cfg.logs), "execute.log")
+execute.nothrow = sh, -c, (cat, "echo >",\
+    (session.path), "rtorrent.pid", " ",(system.pid))
+
+## Other operational settings
+system.umask.set = 0027
+system.cwd.set = (directory.default)
+network.http.dns_cache_timeout.set = 25
+schedule = monitor_diskspace, 15, 60, ((close_low_diskspace, 1000M))
+
+## Some additional values and commands
+method.insert = system.startup_time, value|const, (system.time)
+method.insert = d.data_path, simple,\
+    "if=(d.is_multi_file),\
+        (cat, (d.directory), /),\
+        (cat, (d.directory), /, (d.name))"
+method.insert = d.session_file, simple, "cat=(session.path), (d.hash), .torrent"
+
+## Watch directories
+schedule = watch_load, 11, 10, ((load.verbose, (cat, (cfg.watch), "load/*.torrent")))
+schedule = watch_start, 10, 10, ((load.start_verbose, (cat, (cfg.watch), "start/*.torrent")))
+
+## Logging
+##   Levels = critical error warn notice info debug
+print = (cat, "Logging to ", (cfg.logfile))
+log.open_file = "log", (cfg.logfile)
+log.add_output = "info", "log"
+
+### END of rtorrent.rc ###
