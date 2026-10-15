@@ -8,7 +8,7 @@
 # Versions pinned to match crazymax's tested combination (docker-rtorrent-rutorrent),
 # confirmed to build against the same Alpine 3.23 base that hotio/base:alpinevpn uses.
 
-ARG ALPINE_VERSION=3.23
+ARG ALPINE_VERSION=3.24
 
 ARG CARES_VERSION=1.34.8
 ARG CURL_VERSION=8.21.0
