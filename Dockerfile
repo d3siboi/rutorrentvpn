@@ -13,7 +13,7 @@ ARG ALPINE_VERSION=3.23
 ARG CARES_VERSION=1.34.8
 ARG CURL_VERSION=8.21.0
 ARG LIBTORRENT_VERSION=v0.16.21 # renovate: datasource=github-releases depName=rakshasa/libtorrent
-ARG RTORRENT_VERSION=v0.16.21 # renovate: datasource=github-releases depName=rakshasa/rtorrent
+ARG RTORRENT_VERSION=v0.16.25 # renovate: datasource=github-releases depName=rakshasa/rtorrent
 ARG MKTORRENT_VERSION=v1.1
 ARG DUMPTORRENT_VERSION=v1.7.0 # renovate: datasource=github-releases depName=tomcdj71/dumptorrent
 ARG RAR_VERSION=723 # RARLAB isn't on GitHub — no Renovate datasource for this one, bump by hand against https://www.rarlab.com/download.htm
