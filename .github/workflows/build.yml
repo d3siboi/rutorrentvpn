@@ -44,7 +44,7 @@ jobs:
           context: .
           pull: true
           push: true
-          no-cache: ${{ github.event_name == 'schedule' }}
+          no-cache: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
