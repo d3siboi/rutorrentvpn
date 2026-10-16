@@ -264,6 +264,7 @@ COPY --from=src-filemanager --chown=hotio:hotio /src /var/www/rutorrent/plugins/
 COPY --from=src-geoip2-rutorrent --chown=hotio:hotio /src /var/www/rutorrent/plugins/geoip2
 COPY --from=src-mmdb --chown=hotio:hotio /src/GeoLite2-City.mmdb /var/www/rutorrent/plugins/geoip2/database/GeoLite2-City.mmdb
 COPY --from=src-mmdb --chown=hotio:hotio /src/GeoLite2-Country.mmdb /var/www/rutorrent/plugins/geoip2/database/GeoLite2-Country.mmdb
+RUN rm -rf /var/www/rutorrent/plugins/geoip
 COPY root/ /
 
 RUN find /etc/s6-overlay/s6-rc.d -type f \( -name "run" -o -name "finish" -o -name "up" \) -exec chmod +x {} +
