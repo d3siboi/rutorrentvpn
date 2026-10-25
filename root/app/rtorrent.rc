@@ -87,6 +87,6 @@ schedule = watch_start, 10, 10, ((load.start_verbose, (cat, (cfg.watch), "start/
 ##   Levels = critical error warn notice info debug
 print = (cat, "Logging to ", (cfg.logfile))
 log.open_file = "log", (cfg.logfile)
-log.add_output = "info", "log"
+## log.add_output = "info", "log"
 
 ### END of rtorrent.rc ###
