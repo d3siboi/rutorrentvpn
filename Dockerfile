@@ -12,7 +12,7 @@ ARG ALPINE_VERSION=3.24
 
 ARG CARES_VERSION=1.34.8
 ARG CURL_VERSION=8.21.0
-ARG LIBTORRENT_VERSION=v0.16.26 # renovate: datasource=github-releases depName=rakshasa/libtorrent
+ARG LIBTORRENT_VERSION=v0.16.27 # renovate: datasource=github-releases depName=rakshasa/libtorrent
 ARG RTORRENT_VERSION=v0.16.27 # renovate: datasource=github-releases depName=rakshasa/rtorrent
 ARG MKTORRENT_VERSION=v1.1
 ARG DUMPTORRENT_VERSION=v1.7.0 # renovate: datasource=github-releases depName=tomcdj71/dumptorrent
