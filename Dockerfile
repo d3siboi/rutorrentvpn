@@ -17,7 +17,7 @@ ARG RTORRENT_VERSION=v0.16.26 # renovate: datasource=github-releases depName=rak
 ARG MKTORRENT_VERSION=v1.1
 ARG DUMPTORRENT_VERSION=v1.7.0 # renovate: datasource=github-releases depName=tomcdj71/dumptorrent
 ARG RAR_VERSION=723 # RARLAB isn't on GitHub — no Renovate datasource for this one, bump by hand against https://www.rarlab.com/download.htm
-ARG RUTORRENT_VERSION=v5.3.19 # renovate: datasource=github-releases depName=Novik/ruTorrent
+ARG RUTORRENT_VERSION=v5.3.20 # renovate: datasource=github-releases depName=Novik/ruTorrent
 ARG FILEMANAGER_VERSION=v1.6.0 # renovate: datasource=github-releases depName=nelu/rutorrent-filemanager
 
 # ---------------------------------------------------------------------------
