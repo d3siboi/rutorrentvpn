@@ -19,6 +19,10 @@
       "matchManagers": ["custom.regex"],
       "automerge": false,
       "labels": ["upstream-version-bump"]
+    },
+    {
+      "matchDepNames": ["rakshasa/rtorrent", "rakshasa/libtorrent"],
+      "groupName": "rtorrent + libtorrent"
     }
   ]
 }
