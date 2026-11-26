@@ -12,7 +12,7 @@ ARG ALPINE_VERSION=3.24
 
 ARG CARES_VERSION=1.34.8
 ARG CURL_VERSION=8.21.0
-ARG RTORRENT_VERSION=v0.16.28 # renovate: datasource=github-releases depName=rakshasa/rtorrent
+ARG RTORRENT_VERSION=v0.16.29 # renovate: datasource=github-releases depName=rakshasa/rtorrent
 # libtorrent is released in lockstep with rtorrent, so it follows the same tag
 ARG LIBTORRENT_VERSION=${RTORRENT_VERSION}
 ARG MKTORRENT_VERSION=v1.1
